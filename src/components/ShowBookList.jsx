@@ -1,50 +1,70 @@
-import React, { useState, useEffect } from "react";
-import "../styles.css";
-import axios from "axios";
+// src/components/ShowBookList.jsx
 import { Link } from "react-router-dom";
-import BookCard from "./BookCard";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "../styles.css";
 
-function ShowBookList() {
+export default function ShowBookList() {
+  const apiUrl = import.meta.env.VITE_API_URL 
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+    let mounted = true;
     axios
-      .get("http://localhost:8082/api/books")
+      .get(`${apiUrl}/api/books`)
       .then((res) => {
-        setBooks(res.data);
+        if (mounted) setBooks(res.data || []);
       })
       .catch((err) => {
-        console.log("Error from ShowBookList");
+        console.error("Erro ao buscar livros:", err);
+        if (mounted) setBooks([]);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
-  }, []);
-    
-  const bookList =
-    books.length === 0
-      ? "there is no book record!"
-            : books.map((book, k) => <BookCard book={book} key={k} />);
-    
+    return () => (mounted = false);
+  }, [apiUrl]);
+
+  if (loading) {
+    return <div style={{ padding: 20 }}>Carregando livros...</div>;
+  }
+
   return (
-    <div className="ShowBookList">
-      <div className="container">
-        <div className="row">
-          <div className="col-md-12">
-            <br />
-            <h2 className="display-4 text-center">Books List</h2>
-          </div>
-          <div className="col-md-11">
-            <Link
-              to="/create-book"
-              className="btn btn-outline-warning float-right">
-              + Add New Book
-            </Link>
-            <br />
-            <br />
-            <hr />
-          </div>
-        </div>
-        <div className="list">{bookList}</div>
+    <div className="book-list-container">
+      <h1 className="book-list-title">Books List</h1>
+      <Link to="/create-book" className="add-book-btn">
+        + Add New Book
+      </Link>
+      <div className="book-list-divider"></div>
+
+      <div className="books-grid">
+        {books.length === 0 ? (
+          <div style={{ padding: 20 }}>Nenhum livro encontrado.</div>
+        ) : (
+          books.map((book) => (
+            <div className="book-card" key={book._id ?? book.id}>
+              <img src="/img/books.jpg" alt="Book Cover" />
+              <div className="book-card-content">
+                <h3>{book.title}</h3>
+                <p>{book.author}</p>
+                <p>{book.description}</p>
+                <div style={{ marginTop: 8 }}>
+                  <Link to={`/show-book/${book._id ?? book.id}`}>
+                    <button className="btn">Show</button>
+                  </Link>
+                  <Link
+                    to={`/edit-book/${book._id ?? book.id}`}
+                    style={{ marginLeft: 8 }}
+                  >
+                    <button className="btn">Edit</button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 }
-
-export default ShowBookList;
