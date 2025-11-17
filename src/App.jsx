@@ -72,20 +72,13 @@ export default function App() {
                 <h2>Livros</h2>
               </div>
 
-              {/* conteúdo interno do painel cinza */}
               <div className="library-content">
-                {/* área esquerda (espaço livre/banners/cards etc.) */}
                 <div className="library-left">
-                  {/* Você pode colocar aqui um banner, estatísticas, etc. */}
                 </div>
 
-                {/* wrapper à direita: dentro daqui as rotas relacionadas a livros aparecerão */}
                 <div className="book-list-wrapper">
                   <Routes>
-                    {/* rota principal: lista de livros */}
                     <Route path="/" element={<ShowBookList />} />
-
-                    {/* criar, editar e ver detalhes também aparecem dentro deste card (mesmo wrapper) */}
                     <Route path="/create-book" element={<CreateBook />} />
                     <Route path="/edit-book/:id" element={<UpdateBookInfo />} />
                     <Route
