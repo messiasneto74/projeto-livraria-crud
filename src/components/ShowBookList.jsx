@@ -1,8 +1,8 @@
-// src/components/ShowBookList.jsx
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles.css";
+
 
 export default function ShowBookList() {
   const apiUrl = import.meta.env.VITE_API_URL 
@@ -44,7 +44,11 @@ export default function ShowBookList() {
         ) : (
           books.map((book) => (
             <div className="book-card" key={book._id ?? book.id}>
-              <img src="/img/books.jpg" alt="Book Cover" />
+              <img
+                src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d"
+                alt="Books"
+                height={200}
+              />
               <div className="book-card-content">
                 <h3>{book.title}</h3>
                 <p>{book.author}</p>
