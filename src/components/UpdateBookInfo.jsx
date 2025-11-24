@@ -3,7 +3,12 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles.css";
 
-function UpdateBookInfo(props) {
+export default function UpdateBookInfo() {
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8082";
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
   const [book, setBook] = useState({
     title: "",
     isbn: "",
@@ -13,26 +18,36 @@ function UpdateBookInfo(props) {
     publisher: "",
   });
 
-  const { id } = useParams();
-  const navigate = useNavigate();
-
+  // Buscar dados do livro
   useEffect(() => {
+    let mounted = true;
+
     axios
       .get(`${apiUrl}/api/books/${id}`)
       .then((res) => {
+        if (!mounted) return;
+        const data = res.data || {};
         setBook({
-          title: res.data.title,
-          isbn: res.data.isbn,
-          author: res.data.author,
-          description: res.data.description,
-          published_date: res.data.published_date,
-          publisher: res.data.publisher,
+          title: data.title || "",
+          isbn: data.isbn || "",
+          author: data.author || "",
+          description: data.description || "",
+          published_date: data.published_date || "",
+          publisher: data.publisher || "",
         });
       })
       .catch((err) => {
-        console.log("Error from UpdateBookInfo");
+        console.error("Error from UpdateBookInfo:", err);
+        alert("Erro ao carregar o livro para edição.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
-  }, [id]);
+
+    return () => {
+      mounted = false;
+    };
+  }, [apiUrl, id]);
 
   const onChange = (e) => {
     setBook({ ...book, [e.target.name]: e.target.value });
@@ -41,48 +56,54 @@ function UpdateBookInfo(props) {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    const data = {
-      title: book.title,
-      isbn: book.isbn,
-      author: book.author,
-      description: book.description,
-      published_date: book.published_date,
-      publisher: book.publisher,
-    };
-
     axios
-      .put(`${apiUrl}/api/books/${id}`, data)
-      .then((res) => {
+      .put(`${apiUrl}/api/books/${id}`, book)
+      .then(() => {
         navigate(`/show-book/${id}`);
       })
       .catch((err) => {
-        console.log("Error in UpdateBookInfo!");
+        console.error("Error in UpdateBookInfo!", err);
+        alert("Erro ao atualizar o livro.");
       });
   };
 
-  return (
-    <div className="update-book">
-      <Link to="/" className="link-show-book-list">
-        <button type="button" className="btn-show-book-list btn">
-          Show BooK List
-        </button>
-      </Link>
+  if (loading) {
+    return (
+      <div className="book-list-container">
+        <p>Carregando livro para edição...</p>
+      </div>
+    );
+  }
 
-      <div className="update-book-header">
-        <h1 className="update-book-title">Edit Book</h1>
-        <p className="update-book-text">Update Book's Info</p>
+  return (
+    <div className="book-list-container">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h2 className="book-list-title" style={{ textAlign: "left" }}>
+          Edit Book
+        </h2>
+        <Link to="/">
+          <button className="btn">Voltar</button>
+        </Link>
       </div>
 
-      <form className="form" noValidate onSubmit={onSubmit}>
+      <div className="book-list-divider" />
+
+      <form className="form" onSubmit={onSubmit}>
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
             type="text"
-            placeholder="Title of the Book"
             name="title"
             className="form-control"
             value={book.title}
             onChange={onChange}
+            placeholder="Title of the book"
           />
         </div>
 
@@ -90,11 +111,11 @@ function UpdateBookInfo(props) {
           <label htmlFor="isbn">ISBN</label>
           <input
             type="text"
-            placeholder="ISBN"
             name="isbn"
             className="form-control"
             value={book.isbn}
             onChange={onChange}
+            placeholder="ISBN"
           />
         </div>
 
@@ -102,31 +123,29 @@ function UpdateBookInfo(props) {
           <label htmlFor="author">Author</label>
           <input
             type="text"
-            placeholder="Author"
             name="author"
             className="form-control"
             value={book.author}
             onChange={onChange}
+            placeholder="Author"
           />
         </div>
 
         <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
-            type="text"
-            placeholder="Description of the Book"
             name="description"
             className="form-control"
             value={book.description}
             onChange={onChange}
+            placeholder="Description of the book"
           />
         </div>
 
         <div className="form-group">
           <label htmlFor="published_date">Published Date</label>
           <input
-            type="text"
-            placeholder="Published Date"
+            type="date"
             name="published_date"
             className="form-control"
             value={book.published_date}
@@ -138,20 +157,18 @@ function UpdateBookInfo(props) {
           <label htmlFor="publisher">Publisher</label>
           <input
             type="text"
-            placeholder="Publisher of the Book"
             name="publisher"
             className="form-control"
             value={book.publisher}
             onChange={onChange}
+            placeholder="Publisher of the book"
           />
         </div>
 
-        <button type="submit" className="btn-submit">
+        <button type="submit" className="btn" style={{ marginTop: "12px" }}>
           Update Book
         </button>
       </form>
     </div>
   );
 }
-
-export default UpdateBookInfo;

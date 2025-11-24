@@ -29,6 +29,16 @@
       "published_date": "2011-05-06",
       "publisher": "Editora Universo",
       "updated_date": "2011-05-06"
+    },
+    {
+      "id": 3,
+      "title": "O mundo de sofia",
+      "isbn": "8571644756",
+      "author": "Jostein Gaarder",
+      "description": "Romance da história da filosofia",
+      "published_date": "2011-05-06",
+      "publisher": "Editora Universo",
+      "updated_date": "2011-05-06"
     }
   ]
 }

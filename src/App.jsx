@@ -73,18 +73,14 @@ export default function App() {
               </div>
 
               <div className="library-content">
-                <div className="library-left">
-                </div>
+                <div className="library-left"></div>
 
                 <div className="book-list-wrapper">
                   <Routes>
                     <Route path="/" element={<ShowBookList />} />
                     <Route path="/create-book" element={<CreateBook />} />
                     <Route path="/edit-book/:id" element={<UpdateBookInfo />} />
-                    <Route
-                      path="/show-book/:id"
-                      element={<ShowBookDetails />}
-                    />
+                    <Route path="/show-book/:id" element={<ShowBookDetails />} />
                   </Routes>
                 </div>
               </div>
