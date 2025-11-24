@@ -26,4 +26,6 @@ app.use('/api/books', bookRouter);
 //Porta do servidor
 const port = process.env.PORT || 8082;
 
-app.listen(port, () => console.log (`Server Running on port ${port}`));
+app.listen(port, () => console.log(`Server Running on port ${port}`));
+
+// exportando o app para o teste
