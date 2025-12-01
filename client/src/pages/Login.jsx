@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import API from "../API";
+// Se ainda não for usar a API real, pode comentar a linha abaixo
+// import API from "../API";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Signup = () => {
+const Login = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
-    username: "",
   });
 
-  const { email, password, username } = inputValue;
+  const { email, password } = inputValue;
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -25,37 +26,49 @@ const Signup = () => {
 
   const handleSuccess = (msg) =>
     toast.success(msg, {
-      position: "bottom-right",
+      position: "bottom-left",
     });
+
+  // POR ENQUANTO: só navega pro dashboard
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // teste: ir direto para a home (layout + livros)
+    navigate("/");
+  };
+
+  /*  👉 DEPOIS, quando quiser usar a API real, troca o handleSubmit por este:
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const { data } = await API.post(
-        "/signup",
+        "/login",
         { ...inputValue },
         { withCredentials: true }
       );
 
       const { success, message } = data;
+
       if (success) {
-        handleSuccess(message);
-        setTimeout(() => navigate("/login"), 1000);
+        handleSuccess(message || "Login realizado com sucesso!");
+        setTimeout(() => navigate("/"), 800);
       } else {
-        handleError(message);
+        handleError(message || "Usuário ou senha inválidos");
       }
     } catch (error) {
-      console.log(error);
-      handleError("Erro ao cadastrar");
+      console.error("ERRO NA REQUISIÇÃO /login ===>", error);
+      handleError("Erro ao fazer login");
     }
 
-    setInputValue({ email: "", password: "", username: "" });
+    setInputValue({ email: "", password: "" });
   };
+  */
 
   return (
     <div className="container_auth">
       <div className="form_container">
-        <h2>Signup Account</h2>
+        <h2>Login Account</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email">Email</label>
@@ -64,16 +77,6 @@ const Signup = () => {
               name="email"
               value={email}
               placeholder="Enter your email"
-              onChange={handleOnChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              name="username"
-              value={username}
-              placeholder="Enter your username"
               onChange={handleOnChange}
             />
           </div>
@@ -89,7 +92,7 @@ const Signup = () => {
           </div>
           <button type="submit">Submit</button>
           <span>
-            Already have an account? <Link to="/login">Login</Link>
+            Already have an account? <Link to="/signup">Signup</Link>
           </span>
         </form>
         <ToastContainer />
@@ -98,4 +101,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;
