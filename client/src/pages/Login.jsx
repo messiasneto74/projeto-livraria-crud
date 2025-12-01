@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// Se ainda não for usar a API real, pode comentar a linha abaixo
-// import API from "../API";
+// import API from "../API"; // vamos ligar depois
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,41 +28,34 @@ const Login = () => {
       position: "bottom-left",
     });
 
-  // POR ENQUANTO: só navega pro dashboard
+  // gera um "nome" a partir do email (até conectar com o backend real)
+  const getNameFromEmail = (email) => {
+    if (!email) return "Usuário";
+    return email.split("@")[0]; // ex: messiasneto74@... -> "messiasneto74"
+  };
+
+  // POR ENQUANTO: salva nome+email no localStorage e vai pro dashboard
   const handleSubmit = (e) => {
     e.preventDefault();
-    // teste: ir direto para a home (layout + livros)
-    navigate("/");
-  };
 
-  /*  👉 DEPOIS, quando quiser usar a API real, troca o handleSubmit por este:
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const { data } = await API.post(
-        "/login",
-        { ...inputValue },
-        { withCredentials: true }
-      );
-
-      const { success, message } = data;
-
-      if (success) {
-        handleSuccess(message || "Login realizado com sucesso!");
-        setTimeout(() => navigate("/"), 800);
-      } else {
-        handleError(message || "Usuário ou senha inválidos");
-      }
-    } catch (error) {
-      console.error("ERRO NA REQUISIÇÃO /login ===>", error);
-      handleError("Erro ao fazer login");
+    if (!email || !password) {
+      handleError("Preencha email e senha");
+      return;
     }
 
-    setInputValue({ email: "", password: "" });
+    const fakeUser = {
+      name: getNameFromEmail(email),
+      email,
+    };
+
+    // salva o usuário no localStorage
+    localStorage.setItem("user", JSON.stringify(fakeUser));
+
+    handleSuccess("Login realizado com sucesso!");
+
+    // redireciona pro dashboard (Layout + livros)
+    setTimeout(() => navigate("/"), 500);
   };
-  */
 
   return (
     <div className="container_auth">
