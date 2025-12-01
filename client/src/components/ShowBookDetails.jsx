@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import "../styles.css";
-import axios from "axios";
+import API from "../API";
 
 function ShowBookDetails(props) {
   const apiUrl = import.meta.env.VITE_API_URL;  

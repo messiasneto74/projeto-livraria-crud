@@ -1,4 +1,5 @@
 import { GiHamburgerMenu } from "react-icons/gi";
+import "../styles.css";
 
 function Header({toggleSidebar}) {
 

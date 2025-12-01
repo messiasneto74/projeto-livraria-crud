@@ -6,6 +6,10 @@ const bookRouter = require('./routes/api/books');
 
 const cors = require('cors');
 
+const cookieParser = require('cookie-parser');
+
+const authRoute = require("./routes/api/authRoute");
+
 require('dotenv').config();
 
 const app = express();
@@ -19,6 +23,10 @@ connectDB();
 
 //Cors
 app.use(cors({ origin: true, credentials: true }));
+
+//JWT
+app.use(cookieParser());
+app.use("/", authRoute);
 
 //Definindo as rotas
 app.use('/api/books', bookRouter);

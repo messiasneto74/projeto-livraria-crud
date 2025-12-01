@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
-
 import Menu from "./Menu";
+import "../styles.css";
+
 
 function Layout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);

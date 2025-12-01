@@ -1,5 +1,6 @@
 import { RiCloseLargeFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import "../styles.css";
 
 function Menu({ toggleSidebar }) {
   return (
