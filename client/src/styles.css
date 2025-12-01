@@ -17,9 +17,35 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+
     background-color: #ffffff;
     color: #111;
+    margin: 0;
+    font-family: "Figtree", -apple-system, BlinkMacSystemFont, "SegoeUI", "Figtree", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased, 'Roboto', sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+    background: #ffffff;
+    font-size: 24px;
+}
+
+.app {
+    background: #a8d5e5;
+}
+
+h1 {
+    color: #165a72;
+    margin: 50px auto;
+    font-size: 40px;
+}
+
+.menu1 {
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+h2 {
+    color: #165a72;
 }
 
 .dashboard-wrapper {
@@ -359,4 +385,70 @@ body {
     .library-panel {
         padding: 18px;
     }
+}
+
+.layout-container {
+    display: flex;
+    height: 100vh;
+}
+
+.app {
+    background: #a8d5e5;
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.topbar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #165a72;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #165a72;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.topbar-username {
+    color: #165a72;
+    font-weight: 500;
+}
+
+.content {
+    flex: 1;
+    padding: 1rem;
+    overflow: auto;
 }

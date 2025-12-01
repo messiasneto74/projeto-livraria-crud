@@ -12,11 +12,9 @@ const ProtectedRoute = ({ handleError, allowedRoles }) => {
   useEffect(() => {
     const verifyCookie = async () => {
       if (!cookies.token) {
-        console.log("No token found");
         navigate("/login");
         return;
       }
-
       try {
         const { data } = await API.post("/", {}, { withCredentials: true });
         setRole(data.role);
@@ -30,7 +28,7 @@ const ProtectedRoute = ({ handleError, allowedRoles }) => {
     };
 
     verifyCookie();
-  }, [cookies, navigate]);
+  }, [cookies, navigate, handleError]);
 
   if (loading) {
     return <p>Carregando...</p>;
