@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API from "../API";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,22 +31,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await API.post(
-        "/login",
-        { ...inputValue },
-        { withCredentials: true }
-      );
+      const { data } = await API.post("/login", { ...inputValue });
 
       const { success, message } = data;
       if (success) {
-        handleSuccess(message);
-        setTimeout(() => navigate("/show-book"), 1000);
+        handleSuccess(message || "Login realizado com sucesso!");
+        setTimeout(() => navigate("/"), 800);
       } else {
-        handleError(message);
+        handleError(message || "Usuário ou senha inválidos");
       }
     } catch (error) {
-      console.log(error);
-      handleError("Erro ao logar");
+      console.error(error);
+      handleError("Erro ao fazer login");
     }
 
     setInputValue({ email: "", password: "" });
@@ -54,7 +51,7 @@ const Login = () => {
   return (
     <div className="container_auth">
       <div className="form_container">
-        <h2>Login Account</h2>
+        <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email">Email</label>
@@ -62,24 +59,21 @@ const Login = () => {
               type="email"
               name="email"
               value={email}
-              placeholder="Enter your email"
+              placeholder="Digite seu email"
               onChange={handleOnChange}
             />
           </div>
           <div>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Senha</label>
             <input
               type="password"
               name="password"
               value={password}
-              placeholder="Enter your password"
+              placeholder="Digite sua senha"
               onChange={handleOnChange}
             />
           </div>
-          <button type="submit">Submit</button>
-          <span>
-            Don&apos;t have an account? <Link to="/signup">Signup</Link>
-          </span>
+          <button type="submit">Entrar</button>
         </form>
         <ToastContainer />
       </div>

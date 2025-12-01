@@ -16,5 +16,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:8082", 
+  withCredentials: true,            
+});
+
+
 export default api;
 
