@@ -4,7 +4,7 @@ import "../styles.css";
 import API from "../API";
 
 const Datatable = ({ books }) => {
-  const apiUrl = import.meta.env.VITE_API_URL;  
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navi = useNavigate();
 
   const onDeleteClick = (id) => {

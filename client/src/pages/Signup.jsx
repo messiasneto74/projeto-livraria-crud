@@ -1,23 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import API from "../API";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./pagestyles.css";
 
 const Signup = () => {
   const navigate = useNavigate();
+
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
     username: "",
   });
+
   const { email, password, username } = inputValue;
+
   const handleOnChange = (e) => {
-    const { name, value } = e.target;
     setInputValue({
       ...inputValue,
-      [name]: value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -25,81 +27,102 @@ const Signup = () => {
     toast.error(err, {
       position: "bottom-left",
     });
+
   const handleSuccess = (msg) =>
     toast.success(msg, {
-      position: "bottom-right",
+      position: "bottom-left",
     });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!email || !password || !username) {
+      return handleError("Preencha todos os campos.");
+    }
+
     try {
       const { data } = await API.post(
         "/signup",
-        {
-          ...inputValue,
-        },
+        { email, password, username },
         { withCredentials: true }
       );
-      const { success, message } = data;
-      if (success) {
-        handleSuccess(message);
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      } else {
-        handleError(message);
+
+      if (!data.success) {
+        return handleError(data.message || "Erro ao criar conta.");
       }
+
+      handleSuccess("Conta criada com sucesso!");
+
+      // Depois de cadastrar, manda pro login
+      setTimeout(() => navigate("/login"), 800);
     } catch (error) {
-      console.log(error);
+      console.error("ERRO /signup ===> ", error);
+      handleError("Erro ao conectar com o servidor.");
     }
+
     setInputValue({
-      ...inputValue,
       email: "",
       password: "",
       username: "",
     });
   };
 
+  // Aplica o estilo de página pública (gradiente)
+  useEffect(() => {
+    document.body.className = "signup-page";
+    return () => {
+      document.body.className = "";
+    };
+  }, []);
+
   return (
-    <div className="form_container">
-      <h2>Signup Account</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            placeholder="Enter your email"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Username</label>
-          <input
-            type="text"
-            name="username"
-            value={username}
-            placeholder="Enter your username"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={handleOnChange}
-          />
-        </div>
-        <button type="submit">Submit</button>
-        <span>
-          Already have an account? <Link to={"/login"}>Login</Link>
-        </span>
-      </form>
-      <ToastContainer />
+    <div className="container_auth">
+      <div className="form_container">
+        <h2>Signup Account</h2>
+
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              placeholder="Enter your email"
+              onChange={handleOnChange}
+            />
+          </div>
+
+          <div>
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              value={username}
+              placeholder="Enter your username"
+              onChange={handleOnChange}
+            />
+          </div>
+
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={handleOnChange}
+            />
+          </div>
+
+          <button type="submit">Submit</button>
+
+          <span>
+            Already have an account? <Link to="/login">Login</Link>
+          </span>
+        </form>
+
+        <ToastContainer />
+      </div>
     </div>
   );
 };

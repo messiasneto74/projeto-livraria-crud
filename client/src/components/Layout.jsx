@@ -10,25 +10,36 @@ function Layout() {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // 🔹 Carrega usuário do localStorage quando o layout inicia
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
-      setUser(JSON.parse(stored));
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        console.error("Erro ao ler usuário do localStorage");
+      }
+    } else {
+      // Se não tiver usuário logado → manda pro login
+      navigate("/login");
     }
-  }, []);
+  }, [navigate]);
 
+  // 🔹 Função para gerar iniciais
   const getInitials = (name) => {
-    if (!name) return "MN";
+    if (!name) return "??";
     return name
       .split(" ")
       .filter(Boolean)
-      .slice(0, 2)
       .map((part) => part[0].toUpperCase())
+      .slice(0, 2)
       .join("");
   };
 
-  const initials = getInitials(user?.name);
+  // 🔹 Usa username corretamente
+  const initials = getInitials(user?.username);
 
+  // 🔹 Logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
@@ -36,27 +47,33 @@ function Layout() {
 
   return (
     <div className="layout-container">
+      {/* ============ SIDEBAR ============ */}
       <Sidebar className="app">
         <Menu>
           <MenuItem className="menu1" onClick={() => collapseSidebar()}>
             <h2>Dashboard</h2>
           </MenuItem>
 
-          <MenuItem component={<Link to="/" />}>Home</MenuItem>
-          <MenuItem component={<Link to="/show-book" />}>Livros</MenuItem>
-          <MenuItem component={<Link to="/create-book" />}>Novo Livro</MenuItem>
+          <MenuItem component={<Link to="/" />}>🏠 Home</MenuItem>
+          <MenuItem component={<Link to="/show-book" />}>📚 Livros</MenuItem>
+          <MenuItem component={<Link to="/create-book" />}>
+            ➕ Novo Livro
+          </MenuItem>
         </Menu>
       </Sidebar>
 
+      {/* ============ ÁREA PRINCIPAL ============ */}
       <div className="content-wrapper">
         <header className="topbar">
           <div className="search">
             <input placeholder="Search..." />
           </div>
+
           <div className="topbar-right">
             <button className="btn">New</button>
             <button className="btn">Upload</button>
 
+            {/* ============ AVATAR MENU ============ */}
             <div className="user-menu">
               <div
                 className="avatar"
@@ -69,9 +86,10 @@ function Layout() {
                 <div className="user-menu-dropdown">
                   <div className="user-menu-header">
                     <div className="user-menu-avatar">{initials}</div>
+
                     <div>
                       <div className="user-menu-name">
-                        {user?.name || "Usuário"}
+                        {user?.username || "Usuário"}
                       </div>
                       <div className="user-menu-email">
                         {user?.email || "email@exemplo.com"}
@@ -81,14 +99,14 @@ function Layout() {
 
                   <button
                     className="user-menu-item"
-                    onClick={() => alert("Perfil (em construção)")}
+                    onClick={() => alert("Perfil ainda em construção")}
                   >
-                    Perfil
+                    Meu Perfil
                   </button>
 
                   <button
                     className="user-menu-item"
-                    onClick={() => alert("Configurações (em construção)")}
+                    onClick={() => alert("Configurações ainda em construção")}
                   >
                     Configurações
                   </button>
@@ -105,6 +123,7 @@ function Layout() {
           </div>
         </header>
 
+        {/* CONTEÚDO DAS PÁGINAS */}
         <main className="content">
           <Outlet />
         </main>
