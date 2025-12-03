@@ -168,6 +168,16 @@ body {
     z-index: 99;
 }
 
+.header-logout-btn {
+    margin-left: auto;
+    margin-right: 1rem;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
 .user-menu-header {
     display: flex;
     align-items: center;
@@ -303,4 +313,35 @@ body.signup-page {
 body.login-page .layout-container,
 body.signup-page .layout-container {
     display: none !important;
+}
+
+/* Animação do dropdown do usuário */
+.user-menu-dropdown {
+    animation: fadeSlide .25s ease-out;
+    transform-origin: top right;
+}
+
+@keyframes fadeSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Efeito hover melhorado */
+.user-menu-item:hover {
+    background: rgba(0, 0, 0, 0.06);
+    transition: 0.2s ease;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }

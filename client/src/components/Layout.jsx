@@ -3,14 +3,14 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Sidebar, Menu, MenuItem, useProSidebar } from "react-pro-sidebar";
 import "../styles.css";
 
-function Layout() {
+function Layout({ setIsAuth }) {
   const { collapseSidebar } = useProSidebar();
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // 🔹 Carrega usuário do localStorage quando o layout inicia
+  // 🔥 AQUI ESTÁ O CERTO
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
@@ -19,13 +19,9 @@ function Layout() {
       } catch {
         console.error("Erro ao ler usuário do localStorage");
       }
-    } else {
-      // Se não tiver usuário logado → manda pro login
-      navigate("/login");
     }
-  }, [navigate]);
+  }, []); // só roda 1x ao carregar o Layout
 
-  // 🔹 Função para gerar iniciais
   const getInitials = (name) => {
     if (!name) return "??";
     return name
@@ -36,18 +32,17 @@ function Layout() {
       .join("");
   };
 
-  // 🔹 Usa username corretamente
   const initials = getInitials(user?.username);
 
-  // 🔹 Logout
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setIsAuth(false);
     navigate("/login");
   };
 
   return (
     <div className="layout-container">
-      {/* ============ SIDEBAR ============ */}
       <Sidebar className="app">
         <Menu>
           <MenuItem className="menu1" onClick={() => collapseSidebar()}>
@@ -62,7 +57,6 @@ function Layout() {
         </Menu>
       </Sidebar>
 
-      {/* ============ ÁREA PRINCIPAL ============ */}
       <div className="content-wrapper">
         <header className="topbar">
           <div className="search">
@@ -73,7 +67,6 @@ function Layout() {
             <button className="btn">New</button>
             <button className="btn">Upload</button>
 
-            {/* ============ AVATAR MENU ============ */}
             <div className="user-menu">
               <div
                 className="avatar"
@@ -85,7 +78,13 @@ function Layout() {
               {menuOpen && (
                 <div className="user-menu-dropdown">
                   <div className="user-menu-header">
-                    <div className="user-menu-avatar">{initials}</div>
+                    <div className="avatar">
+                      {user?.photo ? (
+                        <img src={user.photo} className="avatar-img" />
+                      ) : (
+                        initials
+                      )}
+                    </div>
 
                     <div>
                       <div className="user-menu-name">
@@ -99,7 +98,7 @@ function Layout() {
 
                   <button
                     className="user-menu-item"
-                    onClick={() => alert("Perfil ainda em construção")}
+                    onClick={() => navigate("/profile")}
                   >
                     Meu Perfil
                   </button>
@@ -123,7 +122,6 @@ function Layout() {
           </div>
         </header>
 
-        {/* CONTEÚDO DAS PÁGINAS */}
         <main className="content">
           <Outlet />
         </main>

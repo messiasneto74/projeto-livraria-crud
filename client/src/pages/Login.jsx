@@ -5,7 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./pagestyles.css";
 
-const Login = () => {
+const Login = ({ setIsAuth }) => {
+  // 🔹 RECEBE setIsAuth
   const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState({
@@ -19,15 +20,10 @@ const Login = () => {
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
   };
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "bottom-left",
-    });
+  const handleError = (err) => toast.error(err, { position: "bottom-left" });
 
   const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "bottom-left",
-    });
+    toast.success(msg, { position: "bottom-left" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,20 +41,20 @@ const Login = () => {
 
       console.log("RESPOSTA LOGIN ===> ", data);
 
-      if (!data.success) {
-        return handleError(data.message || "Erro no login");
-      }
-
-      if (!data.user) {
+      if (!data.success) return handleError(data.message || "Erro no login");
+      if (!data.user)
         return handleError("Erro interno: usuário não retornado.");
-      }
 
       // SALVA USUÁRIO NO LOCALSTORAGE
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // 🔹 ATUALIZA AUTENTICAÇÃO global
+      setIsAuth(true);
+
       handleSuccess("Login realizado com sucesso!");
 
-      setTimeout(() => navigate("/"), 500);
+      // 🔹 REDIRECIONA sem precisar recarregar
+      navigate("/");
     } catch (error) {
       console.error("ERRO LOGIN ===> ", error);
       handleError("Erro ao conectar com o servidor.");

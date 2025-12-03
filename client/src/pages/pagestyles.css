@@ -165,3 +165,26 @@ body.login-page .layout-container,
 body.signup-page .layout-container {
     display: none !important;
 }
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.profile-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}

@@ -5,7 +5,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./pagestyles.css";
 
-const Signup = () => {
+const Signup = ({ setIsAuth }) => {
+  // 🔹 recebe setIsAuth
+
   const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState({
