@@ -1,11 +1,15 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, || "http://localhost:8082",// URL base da API (ex: http://localhost:8082)
-});
+// Pega o valor da env uma vez
+const baseURL = import.meta.env.VITE_API_URL;
 
-console.log("API URL =>", import.meta.env.VITE_API_URL);
+console.log("API URL =>", baseURL);
+
+const api = axios.create({
+  // Se tiver VITE_API_URL, usa ela; senão, usa localhost
+  baseURL: baseURL || "http://localhost:8082",
+});
 
 api.interceptors.request.use(
   (config) => {
@@ -13,7 +17,7 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log(`Config: ${config.headers}`);
+    console.log("Config headers =>", config.headers);
     return config;
   },
   (error) => Promise.reject(error)
