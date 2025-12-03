@@ -21,20 +21,32 @@ module.exports.userVerification = (req, res) => {
 }
 
 module.exports.tokenVerification = (req, res, next) => {
-  // Pegar o token do cookie ou do header
-  const authHeader = req.headers['authorization'].substring(7, req.headers['authorization'].length);
-  const token = req.cookies.token || authHeader;
+  // tenta pegar do header
+  const authHeader = req.headers["authorization"];
+  let token = null;
+
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1]; // pega só o token depois de "Bearer "
+  }
+
+  // se não veio no header, tenta pegar do cookie
+  if (!token && req.cookies.token) {
+    token = req.cookies.token;
+  }
+
   if (!token) {
-      return res.status(401).json({ message: 'Acesso negado. Nenhum token fornecido.' });
+    return res
+      .status(401)
+      .json({ message: "Acesso negado. Nenhum token fornecido." });
   }
 
   try {
-      // Verificar o token
-      const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-      req.user = decoded;
-      console.log(`req.user: ${req.user}`);
-      next();
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    req.user = decoded;
+    console.log("req.user:", req.user);
+    next();
   } catch (ex) {
-      res.status(400).json({ message: 'Token inválido.' });
+    console.error("Erro ao verificar token:", ex.message);
+    return res.status(400).json({ message: "Token inválido." });
   }
 };
