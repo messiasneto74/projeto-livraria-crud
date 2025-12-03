@@ -11,7 +11,7 @@ function ShowBookDetails(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
+    API
       .get(`${apiUrl}/api/books/${id}`)
       .then((res) => {
         setBook(res.data);
@@ -22,7 +22,7 @@ function ShowBookDetails(props) {
   }, [id]);
 
   const onDeleteClick = (id) => {
-    axios
+    API
       .delete(`${apiUrl}/api/books/${id}`)
       .then((res) => {
         navigate("/");

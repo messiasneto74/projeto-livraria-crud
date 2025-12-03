@@ -22,7 +22,7 @@ export default function UpdateBookInfo() {
   useEffect(() => {
     let mounted = true;
 
-    axios
+    API
       .get(`${apiUrl}/api/books/${id}`)
       .then((res) => {
         if (!mounted) return;
@@ -56,7 +56,7 @@ export default function UpdateBookInfo() {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    axios
+    API
       .put(`${apiUrl}/api/books/${id}`, book)
       .then(() => {
         navigate(`/show-book/${id}`);

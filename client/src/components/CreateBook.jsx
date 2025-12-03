@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import API from "../API";
 import "../styles.css";
 
@@ -26,7 +25,7 @@ const CreateBook = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    axios
+    API
       .post(`${apiUrl}/api/books`, book)
       .then((res) => {
         setBook({

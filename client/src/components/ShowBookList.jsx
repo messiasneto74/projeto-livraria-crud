@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import "../styles.css";
 import { Link } from "react-router-dom";
@@ -13,7 +12,7 @@ export default function ShowBookList() {
   useEffect(() => {
     let mounted = true;
 
-    axios
+    API
       .get(`${apiUrl}/api/books`)
       .then((res) => {
         if (mounted) setBooks(res.data || []);
@@ -34,7 +33,7 @@ export default function ShowBookList() {
   const handleDelete = (id) => {
     if (!window.confirm("Tem certeza que deseja deletar este livro?")) return;
 
-    axios
+    API
       .delete(`${apiUrl}/api/books/${id}`)
       .then(() => {
         setBooks((prev) => prev.filter((b) => (b._id ?? b.id) !== id));
