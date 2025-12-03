@@ -11,4 +11,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </ProSidebarProvider>
   </React.StrictMode>
 );
-      handleError("Erro ao conectar com o servidor. Tente novamente mais tarde.");
+      console.error("Erro ao conectar com o servidor. Tente novamente mais tarde.");

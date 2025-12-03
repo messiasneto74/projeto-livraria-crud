@@ -29,7 +29,7 @@ const Login = ({ setIsAuth }) => {
     e.preventDefault();
 
     if (!email || !password) {
-      return handleError("Preencha email e senha.");
+      return console.error("Preencha email e senha.");
     }
 
     try {
@@ -41,9 +41,9 @@ const Login = ({ setIsAuth }) => {
 
       console.log("RESPOSTA LOGIN ===> ", data);
 
-      if (!data.success) return handleError(data.message || "Erro no login");
+      if (!data.success) return console.error(data.message || "Erro no login");
       if (!data.user)
-        return handleError("Erro interno: usuário não retornado.");
+        return console.error("Erro interno: usuário não retornado.");
 
       // SALVA USUÁRIO NO LOCALSTORAGE
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -57,7 +57,7 @@ const Login = ({ setIsAuth }) => {
       navigate("/");
     } catch (error) {
       console.error("ERRO LOGIN ===> ", error);
-      handleError("Erro ao conectar com o servidor.");
+      console.error("Erro ao conectar com o servidor.");
     }
   };
 

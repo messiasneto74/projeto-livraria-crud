@@ -39,7 +39,7 @@ const Signup = ({ setIsAuth }) => {
     e.preventDefault();
 
     if (!email || !password || !username) {
-      return handleError("Preencha todos os campos.");
+      return console.error("Preencha todos os campos.");
     }
 
     try {
@@ -50,7 +50,7 @@ const Signup = ({ setIsAuth }) => {
       );
 
       if (!data.success) {
-        return handleError(data.message || "Erro ao criar conta.");
+        return console.error(data.message || "Erro ao criar conta.");
       }
 
       handleSuccess("Conta criada com sucesso!");
@@ -59,7 +59,7 @@ const Signup = ({ setIsAuth }) => {
       setTimeout(() => navigate("/login"), 800);
     } catch (error) {
       console.error("ERRO /signup ===> ", error);
-      handleError("Erro ao conectar com o servidor.");
+      console.error("Erro ao conectar com o servidor.");
     }
 
     setInputValue({

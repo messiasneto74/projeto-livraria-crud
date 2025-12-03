@@ -22,7 +22,7 @@ const ProtectedRoute = ({ handleError, allowedRoles }) => {
         setRole(data.role);
       } catch (error) {
         console.error("Erro ao verificar o cookie:", error);
-        handleError("Erro de autenticação. Faça login novamente.");
+        console.error("Erro de autenticação. Faça login novamente.");
         navigate("/login");
       } finally {
         setLoading(false);
@@ -37,7 +37,7 @@ const ProtectedRoute = ({ handleError, allowedRoles }) => {
   }
 
   if (!role || !allowedRoles.includes(role)) {
-    handleError("Você não está autorizado a acessar esta página!");
+    console.error("Você não está autorizado a acessar esta página!");
     return <Navigate to="/show-book" />;
   }
 
