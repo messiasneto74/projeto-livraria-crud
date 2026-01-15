@@ -18,10 +18,15 @@ app.use(express.json({ extended: false }));
 //app.get('/', (req, res) => res.send('Hello world!'));
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://SEU-CLIENT.onrender.com"],
+    origin: [
+      "http://localhost:5173",
+      "https://projeto-livraria-crud-client.onrender.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+
 
 app.use(cookieParser());
 
