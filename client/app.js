@@ -18,7 +18,13 @@ app.get('/', (req, res) => res.send ('Hello World!'));
 connectDB();
 
 //Cors
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://SEU-CLIENT.onrender.com"],
+    credentials: true,
+  })
+);
+
 
 //Definindo as rotas
 app.use('/api/books', bookRouter);

@@ -16,7 +16,13 @@ connectDB();
 //Middleware
 app.use(express.json({ extended: false }));
 //app.get('/', (req, res) => res.send('Hello world!'));
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://SEU-CLIENT.onrender.com"],
+    credentials: true,
+  })
+);
+
 app.use(cookieParser());
 
 app.use("/auth", authRoute);
