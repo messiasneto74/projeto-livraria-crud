@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use("/auth", authRoute);
 
 //Routes
-app.use("/api/books", tokenVerification, booksRoutes);
+app.use("/api/books", /* tokenVerification*/, booksRoutes);
 
 const port = process.env.PORT || 8082;
 
