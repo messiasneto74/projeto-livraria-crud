@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      setIsAuth(!!user?.email); // só logado se tiver email
+      setIsAuth(!!user); // só logado se tiver email
     } catch {
       setIsAuth(false);
     }
