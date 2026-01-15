@@ -77,8 +77,7 @@ export default function ShowBookList() {
                   src={coverSrc}
                   alt="Book Cover"
                   onError={(e) => {
-                    // se der 404, força a imagem padrão
-                    e.currentTarget.src = "/img/book.jpg";
+                    e.currentTarget.src = "./public/img/book.jpg";
                   }}
                 />
 
