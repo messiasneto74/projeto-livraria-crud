@@ -27,7 +27,7 @@ app.use(
 
 
 //Definindo as rotas
-app.use('/api/books', bookRouter);
+app.use("/api/books", bookRouter);
 
 //Porta do servidor
 const port = process.env.PORT || 8082;
