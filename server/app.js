@@ -19,7 +19,7 @@ app.use(express.json({ extended: false }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 
-app.use("/", authRoute);
+app.use("/auth", authRoute);
 
 //Routes
 app.use("/api/books", tokenVerification, booksRoutes);

@@ -34,7 +34,7 @@ const Login = ({ setIsAuth }) => {
 
     try {
       const { data } = await API.post(
-        "/login",
+        "/auth/login",
         { email, password },
         { withCredentials: true }
       );

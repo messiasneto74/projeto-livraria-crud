@@ -44,7 +44,7 @@ const Signup = ({ setIsAuth }) => {
 
     try {
       const { data } = await API.post(
-        "/signup",
+        "/auth/signup",
         { email, password, username },
         { withCredentials: true }
       );
