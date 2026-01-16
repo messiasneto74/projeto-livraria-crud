@@ -23,37 +23,57 @@ const Signup = () => {
     });
   };
 
+  // ==========================
+  // SUBMIT SIGNUP
+  // ==========================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password || !username) {
-      return toast.error("Preencha todos os campos");
+      toast.error("Preencha todos os campos");
+      return;
     }
 
     try {
-      const { data } = await API.post("/auth/signup", {
-        email,
-        password,
-        username,
-      });
+      const { data } = await API.post(
+        "/auth/signup",
+        { email, password, username },
+        { withCredentials: true }
+      );
 
-      if (!data.success) {
-        return toast.error(data.message);
+      console.log("RESPOSTA SIGNUP ===>", data);
+
+      if (!data?.success) {
+        toast.error(data?.message || "Erro ao criar conta");
+        return;
       }
 
-      // guarda email para verificação
+      // ✅ guarda email para verificação
       localStorage.setItem("pendingEmail", JSON.stringify(email));
 
-      toast.success("Conta criada! Verifique seu e-mail");
-      navigate("/verify-email");
+      toast.success("Conta criada! Verifique seu e-mail 📧");
+
+      // ✅ redireciona para verificação
+      navigate("/verify-email", { replace: true });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Erro no servidor");
+      console.error("SIGNUP ERROR:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Erro ao conectar com o servidor"
+      );
     }
   };
 
+  // ==========================
+  // ESTILO DA PÁGINA
+  // ==========================
   useEffect(() => {
     document.body.className = "signup-page";
-    return () => (document.body.className = "");
+    return () => {
+      document.body.className = "";
+    };
   }, []);
 
   return (
@@ -62,29 +82,38 @@ const Signup = () => {
         <h2>Criar conta</h2>
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={email}
-            onChange={handleOnChange}
-          />
+          <div>
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={email}
+              onChange={handleOnChange}
+            />
+          </div>
 
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={username}
-            onChange={handleOnChange}
-          />
+          <div>
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={username}
+              onChange={handleOnChange}
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Senha"
-            value={password}
-            onChange={handleOnChange}
-          />
+          <div>
+            <label>Senha</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Senha"
+              value={password}
+              onChange={handleOnChange}
+            />
+          </div>
 
           <button type="submit">Cadastrar</button>
 
