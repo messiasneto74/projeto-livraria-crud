@@ -52,11 +52,8 @@ function App() {
             )
           }
         />
-        {/* 🔐 VERIFY EMAIL (NOVA ROTA) */}
-        <Route
-          path="/verify-email"
-          element={isAuth ? <Navigate to="/" /> : <VerifyEmail />}
-        />
+        {/* 🔐 VERIFY EMAIL */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
         {/* ROTAS PROTEGIDAS */}
         <Route

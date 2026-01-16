@@ -8,72 +8,42 @@ import "./pagestyles.css";
 const Signup = () => {
   const navigate = useNavigate();
 
-  const [inputValue, setInputValue] = useState({
-    email: "",
-    password: "",
-    username: "",
-  });
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { email, password, username } = inputValue;
-
-  const handleOnChange = (e) => {
-    setInputValue({
-      ...inputValue,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // ==========================
-  // SUBMIT SIGNUP
-  // ==========================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password || !username) {
+    if (!email || !username || !password) {
       toast.error("Preencha todos os campos");
       return;
     }
 
     try {
-      const { data } = await API.post(
-        "/auth/signup",
-        { email, password, username },
-        { withCredentials: true }
-      );
+      const { data } = await API.post("/auth/signup", {
+        email,
+        username,
+        password,
+      });
 
-      console.log("RESPOSTA SIGNUP ===>", data);
-
-      if (!data?.success) {
-        toast.error(data?.message || "Erro ao criar conta");
+      if (!data.success) {
+        toast.error(data.message);
         return;
       }
 
-      // ✅ guarda email para verificação
       localStorage.setItem("pendingEmail", JSON.stringify(email));
+      toast.success("Conta criada! Verifique seu e-mail");
 
-      toast.success("Conta criada! Verifique seu e-mail 📧");
-
-      // ✅ redireciona para verificação
-      navigate("/verify-email", { replace: true });
+      navigate("/verify-email");
     } catch (error) {
-      console.error("SIGNUP ERROR:", error);
-
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          "Erro ao conectar com o servidor"
-      );
+      toast.error(error.response?.data?.message || "Erro no servidor");
     }
   };
 
-  // ==========================
-  // ESTILO DA PÁGINA
-  // ==========================
   useEffect(() => {
     document.body.className = "signup-page";
-    return () => {
-      document.body.className = "";
-    };
+    return () => (document.body.className = "");
   }, []);
 
   return (
@@ -82,38 +52,24 @@ const Signup = () => {
         <h2>Criar conta</h2>
 
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleOnChange}
-            />
-          </div>
+          <input
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-          <div>
-            <label>Username</label>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={username}
-              onChange={handleOnChange}
-            />
-          </div>
+          <input
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
 
-          <div>
-            <label>Senha</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Senha"
-              value={password}
-              onChange={handleOnChange}
-            />
-          </div>
+          <input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
           <button type="submit">Cadastrar</button>
 
