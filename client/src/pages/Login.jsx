@@ -62,10 +62,17 @@ const Login = ({ setIsAuth }) => {
       // ✅ 3. REDIRECIONA
       navigate("/", { replace: true });
     } catch (error) {
-      console.error("ERRO LOGIN ===>", error);
-      handleError("Erro ao conectar com o servidor.");
-    }
-  };
+  console.error("LOGIN ERROR:", error);
+  console.error("RESPONSE:", error.response);
+  console.error("MESSAGE:", error.message);
+
+  toast.error(
+    error.response?.data?.message ||
+    error.message ||
+    "Erro ao conectar com o servidor"
+  );
+}
+
 
   // Estilo da página de login
   useEffect(() => {
