@@ -42,16 +42,21 @@ module.exports.Signup = async (req, res) => {
     });
 
     // 📧 envia email
+    console.log("ENVIANDO EMAIL PARA:", email);
     await sendEmail({
       to: email,
-      subject: "Confirme seu e-mail",
+      subject: "🔐 Código de acesso da sua Livraria",
       html: `
-        <h2>Bem-vindo à Livraria 📚</h2>
-        <p>Seu código de verificação é:</p>
-        <h1>${verificationCode}</h1>
-        <p>Este código expira em 15 minutos.</p>
-      `,
+    <div style="font-family: Arial; max-width: 500px">
+      <h2>Livraria 📚</h2>
+      <p>Seu código de verificação:</p>
+      <h1 style="letter-spacing: 4px">${verificationCode}</h1>
+      <p>Válido por 15 minutos.</p>
+    </div>
+  `,
     });
+      console.log("EMAIL ENVIADO");
+
 
     res.status(201).json({
       success: true,
