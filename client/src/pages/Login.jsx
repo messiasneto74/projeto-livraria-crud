@@ -6,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./pagestyles.css";
 
 const Login = ({ setIsAuth }) => {
-  // 🔹 RECEBE setIsAuth
   const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState({
@@ -20,7 +19,7 @@ const Login = ({ setIsAuth }) => {
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
   };
 
-  const handleError = (err) => toast.error(err, { position: "bottom-left" });
+  const handleError = (msg) => toast.error(msg, { position: "bottom-left" });
 
   const handleSuccess = (msg) =>
     toast.success(msg, { position: "bottom-left" });
@@ -29,7 +28,8 @@ const Login = ({ setIsAuth }) => {
     e.preventDefault();
 
     if (!email || !password) {
-      return console.error("Preencha email e senha.");
+      handleError("Preencha email e senha.");
+      return;
     }
 
     try {
@@ -39,32 +39,40 @@ const Login = ({ setIsAuth }) => {
         { withCredentials: true }
       );
 
-      console.log("RESPOSTA LOGIN ===> ", data);
+      console.log("RESPOSTA LOGIN ===>", data);
 
-      if (!data.success) return console.error(data.message || "Erro no login");
-      if (!data.user)
-        return console.error("Erro interno: usuário não retornado.");
+      if (!data?.success) {
+        handleError(data?.message || "Erro no login");
+        return;
+      }
 
-      // SALVA USUÁRIO NO LOCALSTORAGE
+      if (!data?.user) {
+        handleError("Erro interno: usuário não retornado.");
+        return;
+      }
+
+      // ✅ 1. SALVA USUÁRIO
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // 🔹 ATUALIZA AUTENTICAÇÃO global
+      // ✅ 2. ATUALIZA ESTADO GLOBAL (ANTES DO NAVIGATE)
       setIsAuth(true);
 
       handleSuccess("Login realizado com sucesso!");
 
-      // 🔹 REDIRECIONA sem precisar recarregar
-      navigate("/");
+      // ✅ 3. REDIRECIONA
+      navigate("/", { replace: true });
     } catch (error) {
-      console.error("ERRO LOGIN ===> ", error);
-      console.error("Erro ao conectar com o servidor.");
+      console.error("ERRO LOGIN ===>", error);
+      handleError("Erro ao conectar com o servidor.");
     }
   };
 
-  // Aplica estilo adequado
+  // Estilo da página de login
   useEffect(() => {
     document.body.className = "login-page";
-    return () => (document.body.className = "");
+    return () => {
+      document.body.className = "";
+    };
   }, []);
 
   return (
