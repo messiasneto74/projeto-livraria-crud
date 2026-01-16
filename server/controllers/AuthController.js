@@ -1,7 +1,7 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const { createSecretToken } = require("../util/SecretToken");
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../util/sendEmail");
 
 // ==========================
 // SIGNUP

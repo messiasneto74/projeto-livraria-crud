@@ -1,4 +1,4 @@
-const { Signup, Login } = require("../../controllers/AuthController");
+const { Signup, Login, verifyEmail } = require("../../controllers/AuthController");
 const { userVerification } = require("../../middlewares/authMiddleware");
 const router = require("express").Router();
 
