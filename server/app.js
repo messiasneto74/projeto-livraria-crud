@@ -22,7 +22,6 @@ app.use(
       "http://localhost:5173",
       "https://projeto-livraria-crud-client.onrender.com",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
