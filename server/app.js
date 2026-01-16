@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 // ==========================
-const port = process.env.PORT || 8082;
+
 
 app.get("/test-email", async (req, res) => {
   try {
