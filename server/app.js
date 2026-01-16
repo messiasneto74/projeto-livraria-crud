@@ -49,6 +49,24 @@ app.get("/", (req, res) => {
 // ==========================
 const port = process.env.PORT || 8082;
 
+app.get("/test-email", async (req, res) => {
+  try {
+    const sendEmail = require("./util/sendEmail");
+
+    await sendEmail({
+      to: "SEU_EMAIL@gmail.com",
+      subject: "Teste Resend",
+      html: "<h1>Email enviado com sucesso 🎉</h1>",
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("TEST EMAIL ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const port = process.env.PORT || 8082;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
