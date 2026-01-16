@@ -1,13 +1,17 @@
 const User = require("../models/UserModel");
-const { createSecretToken } = require("../util/SecretToken");
 const bcrypt = require("bcryptjs");
+const { createSecretToken } = require("../util/SecretToken");
+const sendEmail = require("../utils/sendEmail");
 
+// ==========================
+// SIGNUP
+// ==========================
 module.exports.Signup = async (req, res) => {
   try {
     const { email, password, username } = req.body;
 
     if (!email || !password || !username) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
@@ -15,30 +19,47 @@ module.exports.Signup = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.json({
+      return res.status(400).json({
         success: false,
-        message: "User already exists",
+        message: "Email already in use",
       });
     }
 
-    const user = await User.create({ email, password, username });
+    // 🔐 gera código de 6 dígitos
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
-    const token = createSecretToken(user._id);
-    res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false, // true em produção
+    const verificationExpires = Date.now() + 15 * 60 * 1000; // 15 minutos
+
+    const user = await User.create({
+      email,
+      password,
+      username,
+      emailVerified: false,
+      emailVerificationCode: verificationCode,
+      emailVerificationExpires: verificationExpires,
+    });
+
+    // 📧 envia email
+    await sendEmail({
+      to: email,
+      subject: "Confirme seu e-mail",
+      html: `
+        <h2>Bem-vindo à Livraria 📚</h2>
+        <p>Seu código de verificação é:</p>
+        <h1>${verificationCode}</h1>
+        <p>Este código expira em 15 minutos.</p>
+      `,
     });
 
     res.status(201).json({
       success: true,
-      message: "User signed up successfully",
-      user: {
-        username: user.username,
-        email: user.email,
-      },
+      message: "Conta criada. Verifique seu e-mail.",
+      email,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Signup error:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -46,12 +67,15 @@ module.exports.Signup = async (req, res) => {
   }
 };
 
+// ==========================
+// LOGIN
+// ==========================
 module.exports.Login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
@@ -59,36 +83,96 @@ module.exports.Login = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({
+      return res.status(401).json({
         success: false,
-        message: "Incorrect password or email",
+        message: "Incorrect email or password",
       });
     }
 
-    const auth = await bcrypt.compare(password, user.password);
-    if (!auth) {
-      return res.json({
+    // 🔒 bloqueia login sem email verificado
+    if (!user.emailVerified) {
+      return res.status(403).json({
         success: false,
-        message: "Incorrect password or email",
+        message: "Confirme seu e-mail antes de fazer login",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password",
       });
     }
 
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
-      withCredentials: true,
       httpOnly: false, // true em produção
+      withCredentials: true,
     });
 
     res.status(200).json({
       success: true,
-      message: "User logged in successfully",
+      message: "Login successful",
       user: {
-        username: user.username,
         email: user.email,
+        username: user.username,
+        role: user.role,
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+// ==========================
+// VERIFY EMAIL
+// ==========================
+module.exports.verifyEmail = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or code",
+      });
+    }
+
+    if (user.emailVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already verified",
+      });
+    }
+
+    if (
+      user.emailVerificationCode !== code ||
+      user.emailVerificationExpires < Date.now()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired code",
+      });
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationCode = undefined;
+    user.emailVerificationExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+  } catch (error) {
+    console.error("Verify email error:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",

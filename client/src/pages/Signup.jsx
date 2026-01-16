@@ -5,9 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./pagestyles.css";
 
-const Signup = ({ setIsAuth }) => {
-  // 🔹 recebe setIsAuth
-
+const Signup = () => {
   const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState({
@@ -25,21 +23,17 @@ const Signup = ({ setIsAuth }) => {
     });
   };
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "bottom-left",
-    });
+  const handleError = (msg) => toast.error(msg, { position: "bottom-left" });
 
   const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "bottom-left",
-    });
+    toast.success(msg, { position: "bottom-left" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password || !username) {
-      return console.error("Preencha todos os campos.");
+      handleError("Preencha todos os campos.");
+      return;
     }
 
     try {
@@ -49,17 +43,22 @@ const Signup = ({ setIsAuth }) => {
         { withCredentials: true }
       );
 
-      if (!data.success) {
-        return console.error(data.message || "Erro ao criar conta.");
+      if (!data?.success) {
+        handleError(data?.message || "Erro ao criar conta.");
+        return;
       }
 
-      handleSuccess("Conta criada com sucesso!");
+      handleSuccess("Conta criada! Verifique seu e-mail.");
 
-      // Depois de cadastrar, manda pro login
-      setTimeout(() => navigate("/login"), 800);
+      // 🔐 salva email para a verificação
+      localStorage.setItem("pendingEmail", email);
+
+      setTimeout(() => {
+        navigate("/verify-email");
+      }, 800);
     } catch (error) {
-      console.error("ERRO /signup ===> ", error);
-      console.error("Erro ao conectar com o servidor.");
+      console.error("ERRO /signup ===>", error);
+      handleError("Erro ao conectar com o servidor.");
     }
 
     setInputValue({
@@ -69,7 +68,6 @@ const Signup = ({ setIsAuth }) => {
     });
   };
 
-  // Aplica o estilo de página pública (gradiente)
   useEffect(() => {
     document.body.className = "signup-page";
     return () => {

@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, Navigate,} from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Layout from "./components/Layout";
@@ -15,6 +10,8 @@ import UpdateBookInfo from "./components/UpdateBookInfo";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
+import VerifyEmail from "./pages/VerifyEmail";
+
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -55,6 +52,8 @@ function App() {
             )
           }
         />
+        {/* 🔐 VERIFY EMAIL (NOVA ROTA) */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
         {/* ROTAS PROTEGIDAS */}
         <Route
