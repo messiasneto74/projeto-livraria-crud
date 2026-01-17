@@ -14,6 +14,13 @@ export default function Signup() {
     password: "",
   });
 
+  // 🔐 captcha simples
+  const [num1, setNum1] = useState(() => Math.floor(Math.random() * 10 + 1));
+  const [num2, setNum2] = useState(() => Math.floor(Math.random() * 10 + 1));
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -23,10 +30,23 @@ export default function Signup() {
 
     const { email, username, password } = form;
 
+    // valida campos
     if (!email || !username || !password) {
       toast.error("Preencha todos os campos");
       return;
     }
+
+    // ✅ valida captcha (FORÇA number)
+    if (Number(captchaAnswer) !== num1 + num2) {
+      toast.error("Verificação incorreta. Tente novamente.");
+      // gera novo captcha
+      setNum1(Math.floor(Math.random() * 10 + 1));
+      setNum2(Math.floor(Math.random() * 10 + 1));
+      setCaptchaAnswer("");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const { data } = await API.post("/auth/signup", {
@@ -46,6 +66,8 @@ export default function Signup() {
       toast.error(
         err.response?.data?.message || "Erro ao conectar com o servidor"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,7 +106,22 @@ export default function Signup() {
             onChange={handleChange}
           />
 
-          <button type="submit">Cadastrar</button>
+          {/* CAPTCHA */}
+          <div style={{ marginTop: "10px" }}>
+            <label>
+              Quanto é {num1} + {num2}?
+            </label>
+            <input
+              type="number"
+              placeholder="Resposta"
+              value={captchaAnswer}
+              onChange={(e) => setCaptchaAnswer(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </button>
 
           <span>
             Já tem conta? <Link to="/login">Login</Link>
