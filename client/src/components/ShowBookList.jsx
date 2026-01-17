@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "../styles.css";
 import { Link } from "react-router-dom";
+import { fetchBookFromGoogle } from "../services/googleBooks";
 import Datatable from "./Datatable";
 import API from "../API";
 
@@ -67,9 +68,13 @@ export default function ShowBookList() {
       ) : (
         <div className="books-grid">
           {books.map((book) => {
-            const id = book._id ?? book.id;
-            // se o backend não tiver campo cover, usamos uma imagem padrão
-            const coverSrc = book.cover ?? "/img/book.jpg";
+           <img
+             src={
+               book.cover || "https://via.placeholder.com/150x220?text=Sem+Capa"
+             }
+             alt={book.title}
+             style={{ width: "120px" }}
+           />;
 
             return (
               <div className="book-card" key={id}>
