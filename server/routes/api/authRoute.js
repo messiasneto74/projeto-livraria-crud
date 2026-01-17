@@ -1,10 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-const { Signup, Login } = require("../../controllers/AuthController");
-const { captchaMiddleware } = require("../../middlewares/captchaMiddleware");
+const {login, signup, verifyUser,} = require("../../controllers/AuthController");
 
-router.post("/signup", captchaMiddleware, Signup);
-router.post("/login", Login);
+const { tokenVerification } = require("../../middlewares/authMiddleware");
+
+// rotas públicas
+router.post("/login", login);
+router.post("/signup", signup);
+
+// rota protegida
+router.get("/verify", tokenVerification, verifyUser);
 
 module.exports = router;
