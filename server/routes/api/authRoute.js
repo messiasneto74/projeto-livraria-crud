@@ -2,10 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const { Signup, Login } = require("../../controllers/AuthController");
+const { captchaMiddleware } = require("../../middlewares/captchaMiddleware");
 
-const captchaMiddleware = require("../../middlewares/captchaMiddleware");
-
-// ROTAS
 router.post("/signup", captchaMiddleware, Signup);
 router.post("/login", Login);
 
