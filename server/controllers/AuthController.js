@@ -45,16 +45,85 @@ module.exports.Signup = async (req, res) => {
     console.log("ENVIANDO EMAIL PARA:", email);
     await sendEmail({
       to: email,
-      subject: "🔐 Código de acesso da sua Livraria",
+      subject: "🔐 Confirme seu e-mail – Livraria",
       html: `
-    <div style="font-family: Arial; max-width: 500px">
-      <h2>Livraria 📚</h2>
-      <p>Seu código de verificação:</p>
-      <h1 style="letter-spacing: 4px">${verificationCode}</h1>
-      <p>Válido por 15 minutos.</p>
+    <div style="
+      max-width: 520px;
+      margin: 0 auto;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #eee;
+    ">
+      <div style="
+        background: #1f2937;
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+      ">
+        <h2 style="margin: 0;">📚 Livraria</h2>
+      </div>
+
+      <div style="padding: 24px; color: #111827;">
+        <p>Olá 👋</p>
+
+        <p>
+          Recebemos um pedido para criar sua conta.
+          Para confirmar seu e-mail, utilize o código abaixo:
+        </p>
+
+        <div style="
+          font-size: 32px;
+          font-weight: bold;
+          letter-spacing: 6px;
+          text-align: center;
+          margin: 24px 0;
+          color: #111827;
+        ">
+          ${verificationCode}
+        </div>
+
+        <p style="text-align: center;">
+          ou clique no botão abaixo:
+        </p>
+
+        <div style="text-align: center; margin: 24px 0;">
+          <a
+            href="${process.env.CLIENT_URL}/verify-email"
+            style="
+              background: #2563eb;
+              color: #ffffff;
+              padding: 14px 24px;
+              text-decoration: none;
+              border-radius: 6px;
+              font-weight: bold;
+              display: inline-block;
+            "
+          >
+            Confirmar e-mail
+          </a>
+        </div>
+
+        <p style="font-size: 14px; color: #6b7280;">
+          Este código expira em 15 minutos.<br />
+          Se você não solicitou este cadastro, ignore este e-mail.
+        </p>
+      </div>
+
+      <div style="
+        background: #f9fafb;
+        padding: 16px;
+        text-align: center;
+        font-size: 12px;
+        color: #9ca3af;
+      ">
+        © ${new Date().getFullYear()} Livraria. Todos os direitos reservados.
+      </div>
     </div>
   `,
     });
+
       console.log("EMAIL ENVIADO");
 
 
