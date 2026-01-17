@@ -71,9 +71,10 @@ export default function ShowBookList() {
     const id = book._id || book.id;
 
     const coverSrc =
-      book.cover && book.cover !== ""
+      book.cover && book.cover.trim() !== ""
         ? book.cover
-        : "https://via.placeholder.com/150x220?text=Sem+Capa";
+        : "./img/book-placeholder.png";
+
 
     return (
       <div className="book-card" key={id}>
@@ -82,8 +83,7 @@ export default function ShowBookList() {
           alt={book.title}
           style={{ width: "120px", marginBottom: "10px" }}
           onError={(e) => {
-            e.currentTarget.src =
-              "https://via.placeholder.com/150x220?text=Sem+Capa";
+            e.currentTarget.src = "./img/book-placeholder.png";
           }}
         />
 
@@ -101,10 +101,7 @@ export default function ShowBookList() {
               <button className="btn">Editar</button>
             </Link>
 
-            <button
-              className="btn btn-delete"
-              onClick={() => handleDelete(id)}
-            >
+            <button className="btn btn-delete" onClick={() => handleDelete(id)}>
               Excluir
             </button>
           </div>
