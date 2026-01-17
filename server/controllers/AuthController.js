@@ -1,52 +1,96 @@
-const bcrypt = require("bcryptjs");
 const User = require("../models/UserModel");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-exports.Signup = async (req, res) => {
+const createToken = (id) => {
+  return jwt.sign({ id }, process.env.TOKEN_KEY, {
+    expiresIn: "1d",
+  });
+};
+
+module.exports.Signup = async (req, res) => {
   try {
     const { email, username, password } = req.body;
 
-    // 1️⃣ validação básica
     if (!email || !username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Preencha todos os campos",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Campos obrigatórios" });
     }
 
-    // 2️⃣ verifica se usuário já existe
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Email já cadastrado",
-      });
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email já cadastrado" });
     }
 
-    // 3️⃣ 🔥 AQUI ENTRA O bcrypt.hash 🔥
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4️⃣ cria usuário COM SENHA CRIPTOGRAFADA
     const user = await User.create({
       email,
       username,
       password: hashedPassword,
     });
 
-    // 5️⃣ resposta
-    res.status(201).json({
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Erro no cadastro" });
+  }
+};
+
+module.exports.Login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Credenciais inválidas" });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Credenciais inválidas" });
+    }
+
+    const token = createToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
+    res.json({
       success: true,
-      message: "Usuário criado com sucesso",
       user: {
         id: user._id,
-        email: user.email,
         username: user.username,
       },
     });
-  } catch (error) {
-    console.error("SIGNUP ERROR:", error);
-    res.status(500).json({
-      success: false,
-      message: "Erro no servidor",
-    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Erro no login" });
+  }
+};
+
+module.exports.userVerification = async (req, res) => {
+  try {
+    const token = req.cookies?.token;
+    if (!token) return res.json({ success: false });
+
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    const user = await User.findById(decoded.id).select("username");
+
+    if (!user) return res.json({ success: false });
+
+    res.json({ success: true, user: user.username });
+  } catch {
+    res.json({ success: false });
   }
 };
