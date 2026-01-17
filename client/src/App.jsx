@@ -31,14 +31,8 @@ function App() {
       <Routes>
         {/* LOGIN */}
         <Route
-          path="/login"
-          element={
-            isAuth ? (
-              <Navigate to="/" replace />
-            ) : (
-              <Login setIsAuth={setIsAuth} />
-            )
-          }
+          path="/signup"
+          element={isAuth ? <Navigate to="/" replace /> : <Signup />}
         />
 
         {/* SIGNUP */}

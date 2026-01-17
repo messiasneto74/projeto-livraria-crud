@@ -5,61 +5,47 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./pagestyles.css";
 
-const Signup = () => {
+export default function Signup() {
   const navigate = useNavigate();
 
-  // gera desafio
-  const a = Math.floor(Math.random() * 10) + 1;
-  const b = Math.floor(Math.random() * 10) + 1;
-
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const [inputValue, setInputValue] = useState({
+  const [form, setForm] = useState({
     email: "",
-    password: "",
     username: "",
+    password: "",
   });
 
-  const { captcha } = req.body;
-
-  if (Number(captcha) !== Number(req.session.captchaAnswer)) {
-    return res.status(400).json({
-      success: false,
-      message: "Verificação incorreta",
-    });
-  }
-
-  const { email, password, username } = inputValue;
-
-  const handleOnChange = (e) => {
-    setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password || !username) {
-      return toast.error("Preencha todos os campos");
-    }
+    const { email, username, password } = form;
 
-    if (Number(captchaAnswer) !== a + b) {
-      return toast.error("Verificação humana incorreta");
+    if (!email || !username || !password) {
+      toast.error("Preencha todos os campos");
+      return;
     }
 
     try {
       const { data } = await API.post("/auth/signup", {
         email,
-        password,
         username,
+        password,
       });
 
       if (!data.success) {
-        return toast.error(data.message);
+        toast.error(data.message || "Erro no cadastro");
+        return;
       }
 
       toast.success("Conta criada com sucesso!");
       navigate("/login");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Erro no servidor");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Erro ao conectar com o servidor"
+      );
     }
   };
 
@@ -78,34 +64,24 @@ const Signup = () => {
             type="email"
             name="email"
             placeholder="Email"
-            value={email}
-            onChange={handleOnChange}
+            value={form.email}
+            onChange={handleChange}
           />
 
           <input
             type="text"
             name="username"
-            placeholder="Username"
-            value={username}
-            onChange={handleOnChange}
+            placeholder="Usuário"
+            value={form.username}
+            onChange={handleChange}
           />
 
           <input
             type="password"
             name="password"
             placeholder="Senha"
-            value={password}
-            onChange={handleOnChange}
-          />
-
-          {/* CAPTCHA */}
-          <label>
-            Quanto é {a} + {b}?
-          </label>
-          <input
-            type="number"
-            value={captchaAnswer}
-            onChange={(e) => setCaptchaAnswer(e.target.value)}
+            value={form.password}
+            onChange={handleChange}
           />
 
           <button type="submit">Cadastrar</button>
@@ -119,6 +95,4 @@ const Signup = () => {
       </div>
     </div>
   );
-};
-
-export default Signup;
+}
