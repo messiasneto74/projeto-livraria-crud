@@ -41,6 +41,19 @@ function ShowBookDetails(props) {
             <td>Title</td>
             <td>{book.title}</td>
           </tr>
+          
+          <img
+            src={
+              book.cover || "https://via.placeholder.com/200x300?text=Sem+Capa"
+            }
+            alt={book.title}
+            style={{
+              width: "200px",
+              marginBottom: "20px",
+              borderRadius: "6px",
+            }}
+          />
+
           <tr>
             <th scope="row">2</th>
             <td>Author</td>

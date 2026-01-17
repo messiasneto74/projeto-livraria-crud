@@ -31,17 +31,20 @@ const CreateBook = () => {
     const data = await fetchBookFromGoogle(isbn);
 
     if (data) {
-      setBook({
-        title: data.title,
-        author: data.author,
-        description: data.description,
-        publisher: data.publisher,
-        published_date: "",
-      });
+      setBook((prev) => ({
+        ...prev,
+        title: data.title || "",
+        author: data.author || "",
+        description: data.description || "",
+        publisher: data.publisher || "",
+        isbn,
+        cover: data.thumbnail || "",
+      }));
 
-      setCover(data.thumbnail);
+      setCover(data.thumbnail || "");
     }
   };
+
 
   // 🔹 ENVIO FINAL (AQUI VAI A CAPA)
   const onSubmit = async (e) => {
@@ -88,7 +91,7 @@ const CreateBook = () => {
           <img
             src={cover}
             alt="Capa do livro"
-            style={{ width: "150px", margin: "10px 0" }}
+            style={{ width: "150px", marginTop: "10px" }}
           />
         )}
 
