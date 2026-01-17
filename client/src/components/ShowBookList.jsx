@@ -67,42 +67,52 @@ export default function ShowBookList() {
         <div className="book-list-empty">Nenhum livro encontrado.</div>
       ) : (
         <div className="books-grid">
-          {books.map((book) => (
-            <div className="book-card" key={book._id}>
-              <img
-                src={
-                  book.cover ||
-                  "https://via.placeholder.com/150x220?text=Sem+Capa"
-                }
-                alt={book.title}
-                style={{ width: "120px", height: "180px", objectFit: "cover" }}
-              />
+  {books.map((book) => {
+    const id = book._id || book.id;
 
-              <div className="book-card-content">
-                <h3>{book.title}</h3>
-                <p className="book-author">{book.author}</p>
-                <p className="book-desc">{book.description}</p>
+    const coverSrc =
+      book.cover && book.cover !== ""
+        ? book.cover
+        : "https://via.placeholder.com/150x220?text=Sem+Capa";
 
-                <div className="book-card-actions">
-                  <Link to={`/show-book/${book._id}`}>
-                    <button className="btn">Show</button>
-                  </Link>
+    return (
+      <div className="book-card" key={id}>
+        <img
+          src={coverSrc}
+          alt={book.title}
+          style={{ width: "120px", marginBottom: "10px" }}
+          onError={(e) => {
+            e.currentTarget.src =
+              "https://via.placeholder.com/150x220?text=Sem+Capa";
+          }}
+        />
 
-                  <Link to={`/edit-book/${book._id}`}>
-                    <button className="btn">Edit</button>
-                  </Link>
+        <div className="book-card-content">
+          <h3>{book.title}</h3>
+          <p className="book-author">{book.author}</p>
+          <p className="book-desc">{book.description}</p>
 
-                  <button
-                    className="btn btn-delete"
-                    onClick={() => handleDelete(book._id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+          <div className="book-card-actions">
+            <Link to={`/show-book/${id}`}>
+              <button className="btn">Mostrar</button>
+            </Link>
+
+            <Link to={`/edit-book/${id}`}>
+              <button className="btn">Editar</button>
+            </Link>
+
+            <button
+              className="btn btn-delete"
+              onClick={() => handleDelete(id)}
+            >
+              Excluir
+            </button>
+          </div>
         </div>
+      </div>
+    );
+  })}
+</div>
       )}
     </div>
   );
