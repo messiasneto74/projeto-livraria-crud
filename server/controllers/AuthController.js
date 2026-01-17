@@ -67,6 +67,14 @@ module.exports.Login = async (req, res) => {
       });
     }
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password",
+      });
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({
