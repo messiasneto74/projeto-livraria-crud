@@ -25,12 +25,10 @@ module.exports.Signup = async (req, res) => {
         .json({ success: false, message: "Email já cadastrado" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await User.create({
       email,
       username,
-      password: hashedPassword,
+      password,
     });
 
     res.status(201).json({ success: true });
