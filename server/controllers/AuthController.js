@@ -1,109 +1,52 @@
-const User = require("../models/UserModel");
-const bcrypt = require("bcryptjs");
-const { createSecretToken } = require("../util/SecretToken");
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
 
-// ==========================
-// SIGNUP
-// ==========================
-module.exports.Signup = async (req, res) => {
+exports.Signup = async (req, res) => {
   try {
-    const { email, password, username } = req.body;
+    const { email, username, password } = req.body;
 
-    if (!email || !password || !username) {
+    // 1️⃣ validação básica
+    if (!email || !username || !password) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "Preencha todos os campos",
       });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    // 2️⃣ verifica se usuário já existe
+    const userExists = await User.findOne({ email });
+    if (userExists) {
       return res.status(400).json({
         success: false,
-        message: "Email already in use",
+        message: "Email já cadastrado",
       });
     }
 
+    // 3️⃣ 🔥 AQUI ENTRA O bcrypt.hash 🔥
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    // 4️⃣ cria usuário COM SENHA CRIPTOGRAFADA
+    const user = await User.create({
       email,
-      password: hashedPassword,
       username,
+      password: hashedPassword,
     });
 
+    // 5️⃣ resposta
     res.status(201).json({
       success: true,
-      message: "User created successfully",
-    });
-  } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-};
-
-// ==========================
-// LOGIN
-// ==========================
-module.exports.Login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Incorrect email or password",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Incorrect email or password",
-      });
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Incorrect email or password",
-      });
-    }
-
-    const token = createSecretToken(user._id);
-
-    res.cookie("token", token, {
-      httpOnly: false,
-      withCredentials: true,
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
+      message: "Usuário criado com sucesso",
       user: {
+        id: user._id,
         email: user.email,
         username: user.username,
-        role: user.role,
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("SIGNUP ERROR:", error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Erro no servidor",
     });
   }
 };
