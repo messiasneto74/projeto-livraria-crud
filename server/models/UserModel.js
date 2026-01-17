@@ -29,20 +29,6 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
 
-  // 🔐 VERIFICAÇÃO DE E-MAIL
-  emailVerified: {
-    type: Boolean,
-    default: false,
-  },
-
-  emailVerificationCode: {
-    type: String,
-  },
-
-  emailVerificationExpires: {
-    type: Date,
-  },
-
   // 🔁 RESET DE SENHA (para o futuro)
   resetPasswordCode: {
     type: String,

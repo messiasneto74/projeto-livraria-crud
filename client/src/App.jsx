@@ -10,7 +10,7 @@ import UpdateBookInfo from "./components/UpdateBookInfo";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
-import VerifyEmail from "./pages/VerifyEmail";
+
 
 
 function App() {
@@ -52,8 +52,6 @@ function App() {
             )
           }
         />
-        {/* 🔐 VERIFY EMAIL */}
-        <Route path="/verify-email" element={<VerifyEmail />} />
 
         {/* ROTAS PROTEGIDAS */}
         <Route

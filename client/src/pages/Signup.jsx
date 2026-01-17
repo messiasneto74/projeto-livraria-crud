@@ -8,34 +8,47 @@ import "./pagestyles.css";
 const Signup = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  // gera desafio
+  const a = Math.floor(Math.random() * 10) + 1;
+  const b = Math.floor(Math.random() * 10) + 1;
+
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const [inputValue, setInputValue] = useState({
+    email: "",
+    password: "",
+    username: "",
+  });
+
+  const { email, password, username } = inputValue;
+
+  const handleOnChange = (e) => {
+    setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !username || !password) {
-      toast.error("Preencha todos os campos");
-      return;
+    if (!email || !password || !username) {
+      return toast.error("Preencha todos os campos");
+    }
+
+    if (Number(captchaAnswer) !== a + b) {
+      return toast.error("Verificação humana incorreta");
     }
 
     try {
       const { data } = await API.post("/auth/signup", {
         email,
-        username,
         password,
+        username,
       });
 
       if (!data.success) {
-        toast.error(data.message);
-        return;
+        return toast.error(data.message);
       }
 
-      localStorage.setItem("pendingEmail", JSON.stringify(email));
-      toast.success("Conta criada! Verifique seu e-mail");
-
-      navigate("/verify-email");
+      toast.success("Conta criada com sucesso!");
+      navigate("/login");
     } catch (error) {
       toast.error(error.response?.data?.message || "Erro no servidor");
     }
@@ -53,22 +66,37 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit}>
           <input
+            type="email"
+            name="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleOnChange}
           />
 
           <input
+            type="text"
+            name="username"
             placeholder="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleOnChange}
           />
 
           <input
             type="password"
+            name="password"
             placeholder="Senha"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleOnChange}
+          />
+
+          {/* CAPTCHA */}
+          <label>
+            Quanto é {a} + {b}?
+          </label>
+          <input
+            type="number"
+            value={captchaAnswer}
+            onChange={(e) => setCaptchaAnswer(e.target.value)}
           />
 
           <button type="submit">Cadastrar</button>
