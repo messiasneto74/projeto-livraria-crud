@@ -1,52 +1,73 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/UserModel");
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 
-module.exports.userVerification = (req, res) => { 
-  const token = req.cookies.token;
-  console.log(`Token: ${token}`);
-  if (!token) { 
-    return res.json({ status1: false })
-  } 
-  jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
-    console.log(`Erro verification token ${err}`); 
-    if (err) { 
-     return res.json({ status2: false })
-    } else { 
-      const user = await User.findById(data.id)
-      if (user) return res.json({ status: true, user: user.username, role: user.role }); 
-      else return res.json({ status3: false })
-    } 
-  }) 
-}
-
-module.exports.tokenVerification = (req, res, next) => {
-  // tenta pegar do header
-  const authHeader = req.headers["authorization"];
+/**
+ * Middleware para rotas protegidas
+ */
+const tokenVerification = (req, res, next) => {
   let token = null;
 
+  // Header Authorization
+  const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
-    token = authHeader.split(" ")[1]; // pega só o token depois de "Bearer "
+    token = authHeader.split(" ")[1];
   }
 
-  // se não veio no header, tenta pegar do cookie
-  if (!token && req.cookies.token) {
+  // Cookie fallback
+  if (!token && req.cookies?.token) {
     token = req.cookies.token;
   }
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Acesso negado. Nenhum token fornecido." });
+    return res.status(401).json({
+      success: false,
+      message: "Acesso negado. Token não fornecido.",
+    });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-    req.user = decoded;
-    console.log("req.user:", req.user);
+    req.user = decoded; // { id, role, ... }
     next();
-  } catch (ex) {
-    console.error("Erro ao verificar token:", ex.message);
-    return res.status(400).json({ message: "Token inválido." });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Token inválido ou expirado.",
+    });
   }
+};
+
+/**
+ * Endpoint para verificar usuário logado
+ * (uso em /auth/verify ou /auth/me)
+ */
+const userVerification = async (req, res) => {
+  try {
+    const token = req.cookies?.token;
+
+    if (!token) {
+      return res.json({ success: false });
+    }
+
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    const user = await User.findById(decoded.id).select("username role");
+
+    if (!user) {
+      return res.json({ success: false });
+    }
+
+    return res.json({
+      success: true,
+      user: user.username,
+      role: user.role,
+    });
+  } catch (error) {
+    return res.json({ success: false });
+  }
+};
+
+module.exports = {
+  tokenVerification,
+  userVerification,
 };

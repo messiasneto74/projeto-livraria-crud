@@ -1,9 +1,12 @@
-const {Signup, Login} = require("../../controllers/AuthController");
+const express = require("express");
+const router = express.Router();
 
-const router = require("express").Router();
+const { Signup, Login } = require("../../controllers/AuthController");
 
-router.post("/signup", Signup);
+const captchaMiddleware = require("../../middlewares/captchaMiddleware");
+
+// ROTAS
+router.post("/signup", captchaMiddleware, Signup);
 router.post("/login", Login);
 
 module.exports = router;
-
