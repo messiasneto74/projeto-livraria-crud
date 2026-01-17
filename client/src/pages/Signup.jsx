@@ -19,6 +19,15 @@ const Signup = () => {
     username: "",
   });
 
+  const { captcha } = req.body;
+
+  if (Number(captcha) !== Number(req.session.captchaAnswer)) {
+    return res.status(400).json({
+      success: false,
+      message: "Verificação incorreta",
+    });
+  }
+
   const { email, password, username } = inputValue;
 
   const handleOnChange = (e) => {

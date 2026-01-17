@@ -2,6 +2,17 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const { createSecretToken } = require("../util/SecretToken");
 
+// Gera captcha simples
+const generateCaptcha = () => {
+  const a = Math.floor(Math.random() * 10) + 1;
+  const b = Math.floor(Math.random() * 10) + 1;
+  return {
+    question: `Quanto é ${a} + ${b}?`,
+    answer: a + b,
+  };
+};
+
+
 // ==========================
 // SIGNUP
 // ==========================
