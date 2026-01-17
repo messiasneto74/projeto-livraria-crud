@@ -1,4 +1,9 @@
-import {BrowserRouter as Router, Routes, Route, Navigate,} from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Layout from "./components/Layout";
@@ -11,12 +16,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 
-
-
 function App() {
   const [isAuth, setIsAuth] = useState(false);
 
-  // ✅ sincroniza auth APENAS ao carregar o app
+  // 🔐 verifica auth ao carregar
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -31,20 +34,20 @@ function App() {
       <Routes>
         {/* LOGIN */}
         <Route
-          path="/signup"
-          element={isAuth ? <Navigate to="/" replace /> : <Signup />}
+          path="/login"
+          element={
+            isAuth ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Login setIsAuth={setIsAuth} />
+            )
+          }
         />
 
         {/* SIGNUP */}
         <Route
           path="/signup"
-          element={
-            isAuth ? (
-              <Navigate to="/" replace />
-            ) : (
-              <Signup setIsAuth={setIsAuth} />
-            )
-          }
+          element={isAuth ? <Navigate to="/" replace /> : <Signup />}
         />
 
         {/* ROTAS PROTEGIDAS */}
@@ -66,8 +69,8 @@ function App() {
           <Route path="profile" element={<Profile />} />
         </Route>
 
-        {/* CATCH ALL */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* FALLBACK */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
